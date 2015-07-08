@@ -1,0 +1,90 @@
+<html ng-app="appContacts">
+<head>
+	<meta charset="UTF-8">
+	<title>CONTACTS</title>
+    <link rel="stylesheet", type="text/css" href="lib/bootstrap/bootstrap.css">
+	<style>
+		.jumbotron{
+			width:400px;
+			text-align:center;
+			margin-top:20px;
+			margin-left:auto;
+			margin-right:auto;
+		}
+		.table{
+			margin-top:20px;
+		}
+		.form-control {
+			margin-bottom: 5px;	
+		}
+		.selected {
+			background-color:yellow;	
+		}
+		.bold{
+			font-weight: bold;	
+		}
+	</style>
+	<script src="lib/angular/angular.js"></script>
+    <script>
+		angular.module("appContacts",[]);
+		angular.module("appContacts").controller("contactsCtrl", function ($scope){
+			$scope.nameApp = "Contacts";
+			$scope.contacts = [
+				{name: "Peter", phone:"99999999", color:"yellow"},
+				{name: "John", phone:"88888888", color:"blue"},
+				{name: "Mike", phone:"77777777", color:"red"},
+			];
+			$scope.companys = [
+				{name: "AT&T", code: "10"},
+				{name: "Sprint", code: "11"},
+				{name: "Verizon", code: "12"}
+			];
+			$scope.addContact = function (contact) {
+				$scope.contacts.push(angular.copy(contact));
+				delete $scope.contact;
+			};
+			$scope.deleteContact = function (contacts) {
+				$scope.contacts = contacts.filter(function(contact){
+					if(!contact.selected) return contact;
+				});
+			};
+			$scope.isContactSelected = function (contacts) {
+				return contacts.some(function(contact){
+					return contact.selected;
+				});
+			};
+		});
+	</script>
+</head>
+
+<body ng-controller="contactsCtrl">
+	<div class="jumbotron">
+    	<h3>{{nameApp}}</h3>
+       	<table class="table" ng-if="contacts.length > 0">
+        	<tr>
+            	<th></th>
+              	<th>Name</th>
+             	<th>Phone</th>
+              	<th>Company</th>
+              	<th></th>
+          	</tr>
+           <tr ng-class="{'selected bold' : contact.selected}" ng-repeat="contact in contacts">
+           	<td><input type="checkbox" ng-model="contact.selected"></td>
+            	<td>{{contact.name}}</td>
+            	<td>{{contact.phone}}</td>
+              	<td>{{contact.company.name}}</td>
+              	<td><div style="width:20px; height:20px;" ng-style="{'background-color':contact.color}"></div></td>
+           </tr>
+       	</table>
+        <hr>
+        <input class="form-control" type="text" ng-model="contact.name" placeholder="Name">
+        <input class="form-control" type="text" ng-model="contact.phone" placeholder="Phone">
+        <select class="form-control" ng-model="contact.company" ng-options="company.name for company in companys">
+        	<option value="">Select a company</option>
+        </select>
+        <button class="btn btn-block btn-primary" ng-click="addContact(contact)" ng-disabled="!contact.name || !contact.phone">Add Contact</button>
+        <button class="btn btn-block btn-danger" ng-click="deleteContact(contacts)" ng-show="isContactSelected(contacts)">Delete Contact</button>
+    </div>
+    <div ng-include="'footer.html'"></div>
+</body>
+</html>
